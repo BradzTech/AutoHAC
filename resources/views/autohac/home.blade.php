@@ -65,7 +65,7 @@
         <!--<div class="sg-banner-right sg-banner-right-default-logo"></div>-->
     </div>
 
-	<form action="/autohac" method="post"><div class="sg-container" id="SignInSectionContainer">
+	<form action="/autohac/" method="post"><div class="sg-container" id="SignInSectionContainer">
 		{{ csrf_field() }}
         <div class="sg-header">
             <div class="sg-header-heading"><img src="{{ $assetUrl }}/HomeAccess/Media/images/Banner/logon-logout-small.png" />Login</div>
@@ -99,7 +99,6 @@
 		            <button class="sg-button sg-logon-button" style="margin-top: 12px;">Sign up!</button>
 	            </div>
 	            <div id="telegramDiv" style="margin-top: 8px;">
-					<p>Note: Kik is being phased out since it is blocked on BYOD.</p>
 					<h3 style="text-align: center;">Recommended: Telegram</h3>
 					Telegram is a free, lightweight messaging app-- the closest thing to an "official" app for AutoHAC. It can be used in home/school WiFi, and if you have a data plan, it won't use much. All you need to sign up is a phone number; no need to make yet another account.
 		            <ol>

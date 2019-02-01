@@ -11,7 +11,7 @@
 |
 */
 
-Route::group(['as'=>'autohac::', 'prefix'=>'autohac'], function() {
+Route::group(['as'=>'autohac::'], function() {
 	Route::match(array('GET', 'POST'), '', 'AutohacController@getPostHome');
 	Route::get('privacy', 'AutohacController@getPrivacy');
 	Route::post('kik', 'AutohacController@postKik');

@@ -25,7 +25,9 @@ class CreateTables extends Migration
             $table->string('username', 32);
             $table->string('password', 96);
             $table->char('verizon_num', 10)->nullable();
-            $table->unsignedBigInteger('password', 96)->nullable();
+            $table->string('kik_name', 48)->nullable();
+            $table->char('kik_chat_id', 64)->nullable();
+            $table->unsignedBigInteger('telegram_chat_id', 96)->nullable();
             $table->char('signup_code', 6)->nullable();
             $table->string('real_name', 70)->nullable();
             $table->unsignedInteger('school_id');
