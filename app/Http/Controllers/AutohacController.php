@@ -75,7 +75,7 @@ class AutohacController extends Controller
 	
 	public function getPrivacy(Request $request) {
 		$request->privacy = true;
-		return getPostHome($request);
+		return $this->getPostHome($request);
 	}
 	
 	private function retrievePages(AutohacUser $user, array $requestPages) {
@@ -371,7 +371,7 @@ class AutohacController extends Controller
 				$user->sendMsg($str);
 			}
 		} else {
-			$user->sendMsg("Welcome to AutoHAC! Please enter your signup code to continue. Sign up here: " + env('APP_URL'));
+			$user->sendMsg("Welcome to AutoHAC! Please enter your signup code to continue. Sign up here: " . env('APP_URL'));
 		}
 	}
 	

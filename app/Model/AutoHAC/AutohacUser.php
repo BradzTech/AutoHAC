@@ -11,7 +11,7 @@ class AutohacUser extends Model
 {
 	public function sendMsg(string $msg) {
 		if (!is_null($this->telegram_chat_id)) {
-	        $curl = curl_init('https://api.telegram.org/' + env('TELEGRAM_BOT') + '/sendMessage');
+	        $curl = curl_init('https://api.telegram.org/' . env('TELEGRAM_BOT') . '/sendMessage');
 	        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 	        curl_setopt($curl, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
 	        curl_setopt($curl, CURLOPT_TIMEOUT, 30);
@@ -50,7 +50,7 @@ class AutohacUser extends Model
 				$ti += $tdivide;
 				if ($ti < strlen($txt))
 					$mxt .= "...";
-				mail($this->verizon_num . '@vtext.com', '', $mxt, 'From: ' + env('SMS_FROM_ADDRESS'));
+				mail($this->verizon_num . '@vtext.com', '', $mxt, 'From: ' . env('SMS_FROM_ADDRESS'));
 			}
 		}
 	}
@@ -75,7 +75,7 @@ class AutohacUser extends Model
     }
     
     public function deactivate() {
-		$this->sendMsg('Your account has been deactivated. To reactivate: ' + env('APP_URL'));
+		$this->sendMsg('Your account has been deactivated. To reactivate: ' . env('APP_URL'));
 		$this->verizon_num = null;
 		$this->kik_name = null;
 		$this->kik_chat_id = null;
