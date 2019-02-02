@@ -17,6 +17,10 @@ class AutohacController extends Controller
 	// Enter a single user's full name here if needed for debugging
 	//public $onlyUser = '';
 	
+	/**
+	 * Called when a request is made to the site's homepage.
+	 * @return The appropriately populated homepage view.
+	 */
 	public function getPostHome(Request $request) {
 		$vargs = [];
 		$username = $request->input('UserName');
@@ -73,13 +77,22 @@ class AutohacController extends Controller
 		return view('autohac.home', $vargs);
 	}
 	
+	/**
+	 * Get the privacy page.
+	 * @return A view.
+	 */
 	public function getPrivacy(Request $request) {
 		$request->privacy = true;
 		return $this->getPostHome($request);
 	}
 	
+	/**
+	 * Query the target Home Access Center page for a given user.
+	 * @return The retrieved pages.
+	 */
 	private function retrievePages(AutohacUser $user, array $requestPages) {
 		array_unshift($requestPages, $this->URLHome);
+		// Get a path to a temporary cookie file
 		$cookieFile = tempnam(sys_get_temp_dir(), 'autohac_cookie_');
 		$rooturl = $user->school->root_url;
 		$pages = [];
@@ -92,12 +105,14 @@ class AutohacController extends Controller
 			curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 			$fields = [];
 			if ($rpage == $this->URLHome) {
+				// Set POST arguments for login
 				$fields = [
 					"Database" => urlencode("10"),
 					"LogOnDetails.UserName" => urlencode($user->username),
 					"LogOnDetails.Password" => urlencode($user->password)
 				];
 			} elseif ($rpage == $this->URLAssignments && $user->school->current_mp > 0) {
+				// Set POST arguments to trick the Assignments page to load
 				$fields = [
 					"__EVENTTARGET" => "ctl00%24plnMain%24btnRefreshView",
 					"__EVENTARGUMENT" => "",
@@ -129,9 +144,18 @@ class AutohacController extends Controller
 			}
 			curl_close($curl);
 		}
+		// Delete the temporary cookie file
+		if (file_exists($cookieFile)) {
+			unlink($cookieFile);
+		}
 		return $pages;
 	}
 	
+	/**
+	 * Query a user's Home Access Center page, and parse it for all of the
+	 * Courses and Assignments. If any changes exist, update the database or
+	 * send messages as necessary.
+	 */
 	public function syncCourses(AutohacUser $user) {
 		$pages = $this->retrievePages($user, [$this->URLAssignments]);
 		if (isset($pages[$this->URLAssignments])) {
@@ -262,6 +286,10 @@ class AutohacController extends Controller
 		}
 	}
 	
+	/**
+	 * Handle a message recieved from the Kik API (deprecated).
+	 * @return JSON response.
+	 */
 	public function postKik(Request $request) {
 		$jmessages = $request->json()->all()['messages'];
 		if (!is_null($jmessages)) {
@@ -290,6 +318,10 @@ class AutohacController extends Controller
 		return response()->json(true);
 	}
 	
+	/**
+	 * Handle a message recieved from the Telegram API.
+	 * @return JSON response.
+	 */
 	public function postTelegram(Request $request) {
 		$jupdate = $request->json()->all();
 		if (isset($jupdate['message'])) {
@@ -308,9 +340,12 @@ class AutohacController extends Controller
 				$this->handleMsg($user, $jtxt);
 			}
 		}
-		//return response()->json($request->json()->all());
+		return response()->json(true);
 	}
 	
+	/**
+	 * Handle a message recieved from the Verizon SMS-to-email gateway.
+	 */
 	public function handleVerizon(string $fromNum, string $msgg) {
 		$msg = trim($msgg);
 		$user = AutohacUser::where('verizon_num', $fromNum)->first();
@@ -321,6 +356,9 @@ class AutohacController extends Controller
 		$this->handleMsg($user, $msg);
 	}
 	
+	/**
+	 * Handle a given string input message from a given user.
+	 */
 	private function handleMsg(AutohacUser $user, string $msg) {
 		if ($user->isRecognized()) {
 			$m = strtoupper($msg);
@@ -375,6 +413,10 @@ class AutohacController extends Controller
 		}
 	}
 	
+	/**
+	 * Queries to see if a user is valid, and if so, gets their real name.
+	 * @return A string.
+	 */
 	private function getRealName(array $doms) {
 		$rnxp = new \DOMXPath($doms[$this->URLHome]);
 		$rnx = $rnxp->query("//*[@class='sg-banner-menu-element sg-menu-element-identity']")->item(0);
