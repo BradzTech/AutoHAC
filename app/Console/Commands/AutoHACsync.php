@@ -69,12 +69,11 @@ class AutoHACsync extends Command
 	    if ($nd > 290) {
 		    $mp = 4;
 	    }
-		$oldmp = file_get_contents("/var/www/laravel/storage/mp.txt");
+        $primarySchool = AutohacSchool::where('id', 1)->first();
+		$oldmp = $primarySchool->current_mp;
 		if ($oldmp != $mp) {
-			file_put_contents("/var/www/laravel/storage/mp.txt", $mp);
-			$epsd = AutohacSchool::where('id', 1)->first();
-			$epsd->current_mp = $mp;
-			$epsd->save();
+			$primarySchool->current_mp = $mp;
+			$primarySchool->save();
 			if ($oldmp == 0 && $mp == 1) {
 				$allMsg = "School is coming up, and AutoHAC has reactivated for marking period 1! Type ? for help.";
 			} elseif ($oldmp == $mp - 1) {
